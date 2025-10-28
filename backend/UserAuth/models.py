@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin, Group, Permission
 
+
+'''CustomUserManager for the custom user we are creating below'''
 class CustomUserManager(BaseUserManager): 
     
     def create_user(self, username: str, email: str, password: str, **extra_fields):
@@ -17,6 +19,10 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         self.create_user(username=username, email=email, password=password, **extra_fields)
+        
+        
+        
+'''CustomUser Model'''
         
 class CustomeUser(AbstractBaseUser, PermissionsMixin): 
     
