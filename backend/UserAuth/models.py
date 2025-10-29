@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin, Group, Permission
+from django.core.validators import RegexValidator
 
 
 '''CustomUserManager for the custom user we are creating below'''
@@ -23,13 +24,14 @@ class CustomUserManager(BaseUserManager):
         
 '''CustomUser Model'''
         
+PHONE_VALIDATOR = RegexValidator(regex=r"^/+?d{10-15}$", message="The number must be of 10-15 digits, with optional + at start!")
 class CustomUser(AbstractBaseUser, PermissionsMixin): 
     
     Fname = models.CharField(max_length=225)
     Lname = models.CharField(max_length=225)
     username = models.CharField(max_length=225, null=True)
     email = models.EmailField(max_length=225, blank=True, null=True, unique=True)
-    phone_number = models.BigIntegerField( unique=True)
+    phone_number = models.CharField( max_length=15,unique=True, validators=[PHONE_VALIDATOR])
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
     resume = models.FileField(upload_to='resumes/', blank=True, null=True)
     
