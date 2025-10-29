@@ -41,6 +41,7 @@ const SignupForm = () => {
           />
           <button
             type="button"
+            onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -58,7 +59,7 @@ const SignupForm = () => {
         </label>
         <div className="relative">
           <input
-            id="password"
+            id="confirm_password"
             type={showConfirmPassword ? "text" : "password"}
             placeholder="••••••••"
             className="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm"
