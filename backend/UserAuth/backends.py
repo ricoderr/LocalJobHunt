@@ -8,11 +8,13 @@ django by default users 'usename' and 'password' to authenticate,
     # example : authenticate(username=rijang@gmail.com, password=******)
                                                   -Rijan
 '''
-class EmailBackend(ModelBackend): 
+class PhoneBackend(ModelBackend): 
     def authenticate(self, request, username = None, password = None, **kwargs):
         User = get_user_model()
         try: 
-            user = User.objects.get(email=username)
-            return user 
+            if User.check_password(password): 
+                user = User.objects.get(phone_number=username)
+                return user 
+            return None
         except User.DoesNotExist: 
             return None
