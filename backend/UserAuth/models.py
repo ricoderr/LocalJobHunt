@@ -7,16 +7,16 @@ from django.core.validators import RegexValidator
 
 class CustomUserManager(BaseUserManager): 
     
-    def create_user(self, Fname:str, Lname:str, phone_number:int,  email: str = None, password: str = None, **extra_fields):
+    def create_user(self, Fname:str, Lname:str, phone_number:str,  email: str = None, password: str = None, **extra_fields):
         if email:
             email = self.normalize_email(email)
         user = self.model(Fname=Fname, Lname= Lname, phone_number=phone_number, email=email, **extra_fields)
         if password:
             user.set_password(password)
         user.save(using=self._db)
-        return 
+        return user
 
-    def create_superuser(self, Fname:str, Lname:str, phone_number:int,  email: str = None, password: str = None, **extra_fields): 
+    def create_superuser(self, Fname:str, Lname:str, phone_number:str,  email: str = None, password: str = None, **extra_fields): 
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self.create_user( Fname=Fname, Lname=Lname, phone_number=phone_number, email=email, password=password, **extra_fields)
@@ -24,7 +24,7 @@ class CustomUserManager(BaseUserManager):
         
 '''CustomUser Model'''
         
-PHONE_VALIDATOR = RegexValidator(regex=r"^/+?d{10-15}$", message="The number must be of 10-15 digits, with optional + at start!")
+PHONE_VALIDATOR = RegexValidator(regex=r"^\+?\d{10-15}$", message="The number must be of 10-15 digits, with optional + at start!")
 class CustomUser(AbstractBaseUser, PermissionsMixin): 
     
     Fname = models.CharField(max_length=225)

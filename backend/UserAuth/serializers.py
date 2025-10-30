@@ -5,19 +5,18 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class SignupSerializer(serializers.ModelSerializer): 
-    
+    phone_number = serializers.CharField(max_length=15)
     class Meta: 
         model = User
         fields = ["Fname", "Lname", "email", "phone_number", "password"]
         extra_kwargs = {"password": {"write_only": True}}
     
     def create(self, validated_data): 
-        
         user = User.objects.create_user(
             Fname = validated_data['Fname'],
             Lname = validated_data['Lname'],
             email = validated_data.get('email'),  # .get() returns None if no value is there!
-            password = validated_data['password'],
+            phone_number=validated_data.get('phone_number'),
             password = validated_data['password'],
         )
         
