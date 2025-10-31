@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-
+from .models import Otp
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -48,3 +49,45 @@ class LoginSerializer(serializers.Serializer):
         
         attrs['user'] = user        # includes user key in attrs if the user is validated
         return attrs                # returns the attrs to send back to the client. 
+    
+    
+    '''This serializer (GenerateOtpSerializer) was required for Gen-otp endpoint but we are no longer using the endpoint else, /auth/signup only so this is not required!'''
+    
+# class GenerateOtpSerializer(serializers.Serializer): 
+#     phone_number = serializers.CharField()
+    
+#     def validate_email(self, value): 
+#         user_exists = User.objects.filter(phone_number=self.value).exists()
+#         if not user_exists: 
+#             return serializers.ValidationError("User with this phone number doesn't exists.")
+#         return value
+    
+
+    
+    
+    
+class VerifyOtpSerializer(serializers.Serializer): 
+    phone_number = serializers.CharField()
+    code = serializers.CharField()
+    def validate(self, attrs): 
+        phone_number = attrs.get('phone_number')
+        code = attrs.get('code')
+        
+        # To check if given user exists or not
+        try: 
+            user = User.objects.get(phone_number=phone_number)
+        except User.DoesNotExist: 
+            raise serializers.ValidationError("User with this number doesn't exists!")
+        
+        # To check if given otp exists or not
+        try: 
+            otp_instance = Otp.objects.get(user=user, code = code)
+        except Otp.DoesNotExist: 
+            raise serializers.ValidationError("Invalid OTP!")
+        
+        if otp_instance.expiry_at < timezone.now(): 
+            raise serializers.ValidationError("OTP expired!")
+        
+        attrs['user'] = user
+        attrs['otp_instance'] = otp_instance
+        return attrs

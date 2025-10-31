@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-%(n-%l9vu(nv&c8b#x=1gxw1dm^=vz-_ffu!^1s@#8_1_)*5^)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localjobhunt.onrender.com']
+ALLOWED_HOSTS = ['localjobhunt.onrender.com', '127.0.0.1']
 
 
 MEDIA_URL = '/media/'

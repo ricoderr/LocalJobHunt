@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin, Group, Permission
 from django.core.validators import RegexValidator
+from django.utils import timezone
+from datetime import timedelta
 
 
 '''CustomUserManager for the custom user we are creating below'''
@@ -42,6 +44,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
     
     groups = models.ManyToManyField(
         Group, 
@@ -62,3 +65,22 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self): 
         return f"{self.Fname} {self.Lname}"
+
+
+class Otp(models.Model): 
+    user = models.OneToOneField('CustomUser', on_delete=models.CASCADE )
+    code = models.CharField(max_length=6, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expiry_at = models.DateTimeField()
+    
+    def save(self, *args, **kwargs): 
+        if not self.expiry_at: 
+            self.expiry_at = timezone.now() + timedelta(minutes=10)
+            print(self.expiry_at)
+        super().save(*args, **kwargs)   
+        
+    def is_valid(self):
+        return self.expiry_at > timezone.now() 
+        
+    def __str__(self): 
+        return f"{self.user.Fname} -> {self.code}"
