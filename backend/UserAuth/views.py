@@ -18,7 +18,7 @@ class LoginAPIView(APIView):
                     "phone_number": user.phone_number
                 }
             }, status=status.HTTP_200_OK)
-        return Response(serializer.erors, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class SignupAPIView(APIView): 
