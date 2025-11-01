@@ -11,8 +11,18 @@ class SignupSerializer(serializers.ModelSerializer):
         model = User
         fields = ["Fname", "Lname", "email", "phone_number", "password"]
         extra_kwargs = {"password": {"write_only": True}}
-    
+        
+        
     def create(self, validated_data): 
+        inactive_email_user = self.context.get('inactive_email_user')
+        inactive_phone_user = self.context.get('inactive_phone_user')
+        
+        if inactive_email_user:
+            inactive_email_user.delete()
+            
+        if inactive_phone_user:
+            inactive_phone_user.delete()
+            
         user = User.objects.create_user(
             Fname = validated_data['Fname'],
             Lname = validated_data['Lname'],

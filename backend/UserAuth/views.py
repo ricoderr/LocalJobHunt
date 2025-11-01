@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import LoginSerializer, SignupSerializer, VerifyOtpSerializer
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 from .utils import generate_otp
 
 class LoginAPIView(APIView): 
@@ -25,6 +26,22 @@ class LoginAPIView(APIView):
 
 class SignupAPIView(APIView): 
     def post(self, request): 
+        email = request.data.get('email')
+        phone = request.data.get('phone_number')
+        User = get_user_model()
+        # Delete any inactive user with the same email
+        try:
+            user = User.objects.get(email=email, is_active=False)
+            user.delete()
+        except User.DoesNotExist:
+            pass
+
+        # Delete any inactive user with the same phone number
+        try:
+            user = User.objects.get(phone_number=phone, is_active=False)
+            user.delete()
+        except User.DoesNotExist:
+            pass
         serializer = SignupSerializer(data = request.data)
         if serializer.is_valid(): 
             user = serializer.save()
