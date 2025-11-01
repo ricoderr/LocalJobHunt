@@ -15,6 +15,8 @@ class CustomUserManager(BaseUserManager):
         user = self.model(Fname=Fname, Lname= Lname, phone_number=phone_number, email=email, **extra_fields)
         if password:
             user.set_password(password)
+        if phone_number: 
+            str(phone_number)
         user.save(using=self._db)
         return user
 
@@ -26,7 +28,7 @@ class CustomUserManager(BaseUserManager):
         
 '''CustomUser Model'''
         
-PHONE_VALIDATOR = RegexValidator(regex=r"^\+?\d{10-15}$", message="The number must be of 10-15 digits, with optional + at start!")
+PHONE_VALIDATOR = RegexValidator(regex=r"^\+?\d{10,15}$", message="The number must be of 10-15 digits, with optional + at start!")
 class CustomUser(AbstractBaseUser, PermissionsMixin): 
     
     Fname = models.CharField(max_length=225)

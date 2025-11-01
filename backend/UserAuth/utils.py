@@ -6,6 +6,7 @@ from twilio.rest import Client
 import os 
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 
@@ -19,14 +20,16 @@ def generate_otp(user):
     otp, created = Otp.objects.update_or_create(user=user, defaults={
         'code': code, 'expiry_at': timezone.now() + timedelta(minutes=10)
     })
+    try: 
+        client = Client(account_sid, auth_token)
+        message = client.messages.create(
+            body=f"You Verification OTP for LocalJobHunt is {code}. This will expire in 10 minutes.", 
+            from_=from_number, 
+            to = user.phone_number
+        )
+        print(message.sid)
+        return message.sid
+    except Exception as e: 
     
-    client = Client(account_sid, auth_token)
-    message = client.messages.create(
-        body=f"You Verification OTP for LocalJobHunt is {code}. This will expire in 10 minutes.", 
-        from_=from_number, 
-        to = user.phone_number
-    )
-    
-    print(user, code, created)
-    return message.sid
-
+        print(user, code, created, e)
+        return otp
