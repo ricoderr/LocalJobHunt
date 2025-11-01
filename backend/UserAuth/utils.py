@@ -22,7 +22,7 @@ def generate_otp(user):
     
     client = Client(account_sid, auth_token)
     message = client.messages.create(
-        body=f"You Verification OTP for LocalJobHunt is {code}", 
+        body=f"You Verification OTP for LocalJobHunt is {code}. This will expire in 10 minutes.", 
         from_=from_number, 
         to = user.phone_number
     )
