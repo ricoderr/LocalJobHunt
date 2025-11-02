@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 
+const Base_url = import.meta.env.VITE_BASE_URL;
+
 const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setConfirmPassword] = useState(false);
