@@ -1,11 +1,43 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 
+const Base_url = import.meta.env.VITE_BASE_URL;
+
 const LoginForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [userData, setUserData] = useState({ email: "", password: "" });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(`${Base_url}auth/login`, {
+        email: "",
+        password: "",
+      });
+
+      return console.log(response.data);
+    } catch (error) {
+      setIsError(error);
+      console.error("Login failed:", error.response?.data || error.message);
+      // throw error;
+    }
+  };
+
   return (
-    <form className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {/* Email Input */}
       <div>
         <label
@@ -17,6 +49,9 @@ const LoginForm = () => {
         <input
           id="email"
           type="email"
+          name="email"
+          value={userData.email}
+          onChange={handleChange}
           placeholder="example@gmail.com"
           className="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm"
         />
@@ -33,7 +68,10 @@ const LoginForm = () => {
         <div className="relative">
           <input
             id="password"
+            name="password"
             type={showPassword ? "text" : "password"}
+            value={userData.password}
+            onChange={handleChange}
             placeholder="••••••••"
             className="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm"
           />
