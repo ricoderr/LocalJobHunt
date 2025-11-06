@@ -45,9 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders', 
-    'rest_framework', 
+    'rest_framework',
+    'rest_framework_simplejwt' , 
     'api', 
     'UserAuth', 
+    'uploads'
     
 ]
 
@@ -69,6 +71,14 @@ CORS_ALLOW_HEADERS = ["*"]
 CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
 
 ROOT_URLCONF = 'Project.urls'
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
+
 
 TEMPLATES = [
     {
@@ -147,3 +157,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Cloud file upload: 
+KOFR_HOST = os.getenv('KOFR_HOST')
+KOFR_USER = os.getenv('KOFR_USER')
+KOFR_PASSWORD = os.getenv('KOFR_PASSWORD')          
