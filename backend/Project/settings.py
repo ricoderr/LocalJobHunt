@@ -17,6 +17,17 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
+
+# For google drive 
+SERVICE_ACCOUNT_FILE = os.getenv("SERVICE_ACCOUNT_FILE")
+RESUME_DRIVE_FOLDER_ID = os.getenv("RESUME_DRIVE_FOLDER_ID")
+DRIVE_ACCOUNT_GMAIL = os.getenv("DIRVE_ACCOUNT_GMAIL")
+
+# Creds and token: 
+
+GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS")
+GOOGLE_TOKEN = os.getenv("GOOGLE_TOKEN")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -47,7 +58,7 @@ INSTALLED_APPS = [
     'corsheaders', 
     'rest_framework',
     'rest_framework_simplejwt' , 
-    'api', 
+    'jobs',
     'UserAuth', 
     'uploads'
     
@@ -157,8 +168,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Cloud file upload: 
-KOFR_HOST = os.getenv('KOFR_HOST')
-KOFR_USER = os.getenv('KOFR_USER')
-KOFR_PASSWORD = os.getenv('KOFR_PASSWORD')          

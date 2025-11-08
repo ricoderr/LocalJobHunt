@@ -1,33 +1,66 @@
-from django.core.files.storage import Storage 
-from webdav3.client import Client
-from django.conf import settings 
-import os 
+import os, io, json
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.http import MediaIoBaseUpload
+from django.conf import settings
 
-class KoofrStorage(Storage): 
-    def __init__(self): 
-        options = {
-             'webdav_hostname': settings.KOFR_HOST,
-            'webdav_login': settings.KOFR_USER,
-            'webdav_password': settings.KOFR_PASSWORD,
-        }
-        self.client = Client(options)
-    
-    def _save(self, name, content): 
-        folder = '/resumes'
-        
-        if folder != '' and not self.client.check(folder): 
-            self.client.mkdir(folder)
-            
-        self.client.upload_sync(remote_path=f'{folder}/{name}', local_path_or_file=content.file)
-        return name
+# creating tmp directory for runtime in different os. 
+TMP_DIR = os.environ.get("TMPDIR") or os.environ.get("TEMP") or "/tmp"
+APP_TMP = os.path.join(TMP_DIR, "localjobhunt_drive")
+os.makedirs(APP_TMP, exist_ok=True)
 
-    def exists(self, name):
-        return self.client.check(f'/{name}')
+#creating token/creds path and joining with the temp folder created. 
+TOKEN_PATH = os.path.join(APP_TMP, "token.json")
+CREDENTIALS_PATH = os.path.join(APP_TMP, "credentials.json")
 
-    def url(self, name):
-        # Koofr files are private by default
-        return f"{settings.KOFR_HOST}/{name}"
+# filling up the credentials.json and token.json with the data from .env
+if "GOOGLE_CREDENTIALS" in os.environ:
+    creds_json = json.loads(settings.GOOGLE_CREDENTIALS)
+    with open(CREDENTIALS_PATH, "w") as f:
+        f.write(json.dumps(creds_json))
 
-    def delete(self, name):
-        if self.client.check(f'/{name}'):
-            self.client.clean(f'/{name}')
+if "GOOGLE_TOKEN" in os.environ:
+    token_json = json.loads(settings.GOOGLE_TOKEN) 
+    with open(TOKEN_PATH, "w") as f:
+        f.write(json.dumps(token_json))
+
+SCOPES = ['https://www.googleapis.com/auth/drive']
+
+def get_drive_service():
+    from google.oauth2.credentials import Credentials
+
+    creds = None
+    if os.path.exists(TOKEN_PATH):
+        creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
+
+    if not creds or not creds.valid:
+        flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
+        creds = flow.run_local_server(port=0)
+        with open(TOKEN_PATH, 'w') as token_file:
+            token_file.write(creds.to_json())
+
+    service = build('drive', 'v3', credentials=creds)
+    return service
+
+def drive_upload(file, folder_id):
+    service = get_drive_service()
+
+    file_metadata = {
+        'name': file.name,
+        'parents': [folder_id]  
+    }
+
+    media = MediaIoBaseUpload(io.BytesIO(file.read()), mimetype=file.content_type)
+
+    uploaded = service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id, webViewLink'
+    ).execute()
+
+    service.permissions().create(
+        fileId=uploaded['id'],
+        body={'role': 'reader', 'type': 'anyone'}
+    ).execute()
+
+    return f"https://drive.google.com/uc?export=view&id={uploaded['id']}"
