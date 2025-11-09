@@ -39,17 +39,16 @@ def get_drive_service():
         creds.refresh(Request())
 
 
-    if not creds or not creds.valid:
-        print("Getting you redirected.....")
-        flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
-        creds = flow.run_local_server(port=0)
-        with open(TOKEN_PATH, 'w') as token_file:
-            token_file.write(creds.to_json())
-        update_env_var("GOOGLE_TOKEN", json.loads(creds.to_json()))
-    
-    
     # if not creds or not creds.valid:
-    #     raise Exception("Invalid Google token. Cannot do OAuth on Render.")
+    #     flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
+    #     creds = flow.run_local_server(port=0)
+    #     with open(TOKEN_PATH, 'w') as token_file:
+    #         token_file.write(creds.to_json())
+    #     update_env_var("GOOGLE_TOKEN", json.loads(creds.to_json()))
+    
+    
+    if not creds or not creds.valid:
+        raise Exception("Invalid Google token. Cannot do OAuth on Render.")
 
     service = build('drive', 'v3', credentials=creds)
     return service
