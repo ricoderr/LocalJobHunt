@@ -61,7 +61,8 @@ def drive_upload(file, folder_id):
         'parents': [folder_id]  
     }
 
-    media = MediaIoBaseUpload(io.BytesIO(file.read()), mimetype=file.content_type)
+    media = MediaIoBaseUpload(file, mimetype=file.content_type)
+
 
     uploaded = service.files().create(
         body=file_metadata,
