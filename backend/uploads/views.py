@@ -19,9 +19,8 @@ class ResumeAPIView(APIView):
             file = serializer.validated_data['file']
             drive_link = drive_upload(file, settings.RESUME_DRIVE_FOLDER_ID)
             
-            print(drive_link)
             
-            Resume.objects.update_or_create(user=user, defaults={"file": file, "drive_link": drive_link})
+            Resume.objects.update_or_create(user=user, defaults={"drive_link": drive_link})
             
             
             
