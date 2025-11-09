@@ -21,7 +21,8 @@ class ResumeAPIView(APIView):
             
             print(drive_link)
             
-            Resume.objects.update_or_create(user=user, defaults={"file": file})
+            Resume.objects.update_or_create(user=user, defaults={"file": file, "drive_link": drive_link})
+            
             
             
             return Response({

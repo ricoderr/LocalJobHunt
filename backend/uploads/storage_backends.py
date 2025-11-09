@@ -3,6 +3,10 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.http import MediaIoBaseUpload
 from django.conf import settings
+from .helper import update_env_var
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+
 
 # creating tmp directory for runtime in different os. 
 TMP_DIR = os.environ.get("TMPDIR") or os.environ.get("TEMP") or "/tmp"
@@ -27,17 +31,25 @@ if "GOOGLE_TOKEN" in os.environ:
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 def get_drive_service():
-    from google.oauth2.credentials import Credentials
-
     creds = None
     if os.path.exists(TOKEN_PATH):
         creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
+    
+    if creds and creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+
 
     if not creds or not creds.valid:
+        print("Getting you redirected.....")
         flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
         creds = flow.run_local_server(port=0)
         with open(TOKEN_PATH, 'w') as token_file:
             token_file.write(creds.to_json())
+        update_env_var("GOOGLE_TOKEN", json.loads(creds.to_json()))
+    
+    
+    # if not creds or not creds.valid:
+    #     raise Exception("Invalid Google token. Cannot do OAuth on Render.")
 
     service = build('drive', 'v3', credentials=creds)
     return service
