@@ -17,18 +17,17 @@ class ResumeAPIView(APIView):
         user = request.user
         if serializer.is_valid():
             file = serializer.validated_data['file']
-            drive_link = drive_upload(file, settings.RESUME_DRIVE_FOLDER_ID)
+            drive = drive_upload(file, settings.RESUME_DRIVE_FOLDER_ID)
             
-            
-            Resume.objects.update_or_create(user=user, defaults={"drive_link": drive_link})
-            
-            
-            
+            Resume.objects.update_or_create(user=user, defaults={"drive_link": drive.get('link')})
             return Response({
                 'file_name': file.name,
                 'content_type': file.content_type,
                 'size_bytes': file.size,
-                'drive_link': drive_link, 
+                'direct_link': drive.get('direct_link'),
+                'thumbnail_link': drive.get('thumbnail_link'), 
+                'download_link': drive.get('download_link'),  
+                "drive_id": drive.get('id'),
+                
             })
-            
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

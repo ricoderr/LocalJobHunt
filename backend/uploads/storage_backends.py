@@ -87,4 +87,9 @@ def drive_upload(file, folder_id):
     # Clear the file from memory
     file.seek(0)  # Reset file pointer if needed elsewhere
     
-    return f"https://drive.google.com/uc?export=view&id={uploaded['id']}"
+    return {
+         "id": file.id,
+         "direct_link": f"https://drive.google.com/uc?export=view&id={file.id}",  # For <img> tag
+         "thumbnail_link": f"https://drive.google.com/thumbnail?id={file.id}",  # Smaller version
+         "download_link": f"https://drive.google.com/uc?export=download&id={file.id}", 
+         }
