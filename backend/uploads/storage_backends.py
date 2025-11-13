@@ -89,7 +89,7 @@ def drive_upload(file, folder_id):
     
     return {
          "id": uploaded.get('id'),
-         "direct_link": f"https://drive.google.com/uc?export=view&id={uploaded.get('id')}",  # For <img> tag
+         "direct_link": f"https://lh3.googleusercontent.com/d/{uploaded.get('id')}",  # For <img> tag
          "thumbnail_link": f"https://drive.google.com/thumbnail?id={uploaded.get('id')}",  # Smaller version
          "download_link": f"https://drive.google.com/uc?export=download&id={uploaded.get('id')}", # forces download 
          }
