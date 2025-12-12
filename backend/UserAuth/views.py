@@ -5,14 +5,21 @@ from .serializers import LoginSerializer, SignupSerializer, VerifyOtpSerializer
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from .utils import generate_otp
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class LoginAPIView(APIView): 
     def post(self, request):
         serializer = LoginSerializer(data = request.data)
         if serializer.is_valid():
             user = serializer.validated_data['user']
+            refresh = RefreshToken.for_user(user)
+            access = refresh.access_token
             return Response({
                 "message": "Login Successful", 
+                "tokens": {
+                    "access" : str(access),
+                    "refresh": str(refresh), 
+                },
                 "user_data": {
                     "id": user.id,
                     "Fname": user.Fname,

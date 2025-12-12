@@ -36,10 +36,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=225, null=True)
     email = models.EmailField(max_length=225, blank=True, null=True, unique=True)
     phone_number = models.CharField( max_length=15,unique=True, validators=[PHONE_VALIDATOR])
-    profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
-    resume = models.FileField(upload_to='resumes/', blank=True, null=True)
-    
-    
     skills = models.TextField(blank=True, null=True)
     
     is_staff = models.BooleanField(default=False)
