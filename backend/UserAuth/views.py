@@ -66,7 +66,7 @@ class VerifyOtpAPIView(APIView):
         if serializer.is_valid(): 
             user = serializer.validated_data['user']
             otp_instance = serializer.validated_data['otp_instance']
-            
+             
             # verify the user's phone-number by activating the user. 
             user.is_active = True 
             user.verified_at = timezone.now()
