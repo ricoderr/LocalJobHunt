@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-
 import { signupService } from "../services/authServices";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignupComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,9 +22,21 @@ const SignupComponent = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const data = await signupService(signupData);
-      console.log(data);
+      toast.promise(
+        signupService(signupData),
+        {
+          pending: "Signing in.....",
+          success: "Verification otp is sent to your email.",
+          error: {
+            render({ data }) {
+              return data.data?.message || "Signup failed!";
+            },
+          },
+        }
+        // console.log(data.status);
+      );
     } catch (error) {
+      toast.error("Internal server error!");
       console.error(error.response?.data?.non_field_errors || "Signup failed");
     }
   };
@@ -177,6 +191,16 @@ const SignupComponent = () => {
         >
           {isLoading ? "Creating account..." : "Sign up"}
         </button>
+
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </form>
     </>
   );

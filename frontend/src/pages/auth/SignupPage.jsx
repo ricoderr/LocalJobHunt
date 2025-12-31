@@ -5,7 +5,7 @@ const SignupPage = () => {
   return (
     <>
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-[440px]">
+        <div className="w-full max-w-110">
           <div className="bg-white border border-neutral-200 rounded-3xl p-6 shadow-sm">
             <h1 className="text-[1.75rem] font-bold text-neutral-900 text-center mb-4 tracking-tight">
               Sign Up

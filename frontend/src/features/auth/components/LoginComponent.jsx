@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { loginService } from "../services/authServices";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,8 +13,6 @@ const LoginComponent = () => {
     identifier: "",
     password: "",
   });
-
-  //   console.log(loginData.identifier);
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -26,10 +27,22 @@ const LoginComponent = () => {
     e.preventDefault();
 
     try {
-      const data = await loginService(loginData);
-      console.log(data);
+      toast.promise(
+        loginService(loginData),
+        {
+          pending: "logging in.....",
+          success: "Login successful",
+          error: {
+            render({ data }) {
+              return data.data?.message || "Login failed!";
+            },
+          },
+        }
+        // console.log(data.status);
+      );
     } catch (error) {
-      console.error(error.response?.data?.non_field_errors || "Login failed");
+      toast.error("Internal server error!");
+      console.error(error.response?.data?.non_field_errors || "Login failed!");
     }
   };
 
@@ -99,6 +112,16 @@ const LoginComponent = () => {
           {isLoading ? "Logging in..." : "Log in"}
         </button>
       </form>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </div>
   );
 };
