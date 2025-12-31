@@ -66,7 +66,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Otp(models.Model): 
-    user = models.OneToOneField('CustomUser', on_delete=models.CASCADE )
+    user = models.OneToOneField('CustomUser', on_delete=models.CASCADE)
     code = models.CharField(max_length=6, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expiry_at = models.DateTimeField()
