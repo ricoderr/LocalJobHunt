@@ -1,7 +1,7 @@
 import React from "react";
 import SignupComponent from "../../features/auth/components/SignupComponent";
 
-const SignupPage = () => {
+const SignupPage = ({ onSignupSuccess }) => {
   return (
     <>
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
@@ -20,7 +20,7 @@ const SignupPage = () => {
               </div>
             </div>
 
-            <SignupComponent />
+            <SignupComponent handleOnSignupSuccess={onSignupSuccess} />
 
             <div className="mt-4 text-center">
               <p className="text-neutral-600 text-sm">

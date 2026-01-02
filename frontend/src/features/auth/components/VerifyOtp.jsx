@@ -1,19 +1,18 @@
 import { useState, useRef } from "react";
 import { verifyOtpService } from "../services/verifyOtpService";
 
-export default function VerifyOtp() {
-  const [otp, setOtp] = useState({
-    code: ["", "", "", "", "", ""],
-    phone_number: "", // Add your phone number here or pass it as a prop
-  });
+export default function VerifyOtp({ onBack, onUserEmail, onVerifyOtpSuccess }) {
+  const email = onUserEmail;
+
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
 
   const handleChange = (index, value) => {
     if (value.length > 1) return;
 
-    const newCode = [...otp.code];
-    newCode[index] = value;
-    setOtp({ ...otp, code: newCode });
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
 
     // Auto-focus next input
     if (value && index < 5) {
@@ -29,12 +28,19 @@ export default function VerifyOtp() {
   };
 
   const handleSubmit = async () => {
-    console.log("Button Clicked");
-    const otpCode = otp.code.join("");
+    // console.log("Button Clicked");
+    const otpCode = otp.join("");
+    const payload = {
+      code: otpCode,
+      email: email,
+    };
+
     try {
-      const data = await verifyOtpService(otpCode);
+      const data = await verifyOtpService(payload);
       console.log(data);
 
+      onVerifyOtpSuccess();
+      // onBack("signup");
       //   return data;
     } catch (error) {
       console.log(error);
@@ -55,7 +61,7 @@ export default function VerifyOtp() {
 
         <div className="space-y-12">
           <div className="flex justify-between gap-3">
-            {otp.code.map((digit, index) => (
+            {otp.map((digit, index) => (
               <input
                 key={index}
                 ref={(el) => (inputRefs.current[index] = el)}

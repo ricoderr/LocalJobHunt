@@ -4,35 +4,33 @@ import VerifyOtp from "../../features/auth/components/VerifyOtp";
 
 const AuthPage = () => {
   const [currentPage, setCurrentPage] = useState("signup");
-  const [userPhoneNumber, setUserPhoneNumber] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
-  useEffect(() => {
-    console.log("currentPage changed to:", currentPage);
-  }, [currentPage]);
-
-  const handleSignupSuccess = (phone_number) => {
-    setUserPhoneNumber(phone_number);
-    setTimeout(() => {
-      setCurrentPage("verify-otp");
-    }, 0);
+  const handleSignupSuccess = (email) => {
+    // console.log(email);
+    setUserEmail(email);
+    setCurrentPage("verify-otp");
   };
 
   const handleVerifyOtpSuccess = () => {
-    setCurrentPage("");
+    setCurrentPage("signup");
   };
 
   const handleBackToSignup = () => {
     setCurrentPage("signup");
-    setUserPhoneNumber("");
+    setUserEmail("");
   };
 
   return (
     <div>
-      {currentPage === "signup" && <SignupPage />}
+      {currentPage === "signup" && (
+        <SignupPage onSignupSuccess={handleSignupSuccess} />
+      )}
       {currentPage === "verify-otp" && (
         <VerifyOtp
-          onUserPhoneNumber={userPhoneNumber}
+          onUserEmail={userEmail}
           onVerifyOtpSuccess={handleVerifyOtpSuccess}
+          onBack={handleBackToSignup}
         />
       )}
       {/* {currentPage === "home" } */}
