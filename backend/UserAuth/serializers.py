@@ -77,15 +77,15 @@ class LoginSerializer(serializers.Serializer):
     
     
 class VerifyOtpSerializer(serializers.Serializer): 
-    phone_number = serializers.CharField()
+    email = serializers.CharField()
     code = serializers.CharField()
     def validate(self, attrs): 
-        phone_number = attrs.get('phone_number')
+        email = attrs.get('email')
         code = attrs.get('code')
         
         # To check if given user exists or not
         try: 
-            user = User.objects.get(phone_number=phone_number)
+            user = User.objects.get(email=email)
         except User.DoesNotExist: 
             raise serializers.ValidationError("User with this number doesn't exists!")
         
