@@ -10,6 +10,8 @@ const SignupComponent = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // const handleOnSignupSuccess = onSignupSuccess;
+
   const [signupData, setSignupData] = useState({
     Fname: "",
     Lname: "",
@@ -22,21 +24,29 @@ const SignupComponent = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      toast.promise(
-        signupService(signupData),
-        {
-          pending: "Signing in.....",
-          success: "Verification otp is sent to your email.",
-          error: {
-            render({ data }) {
-              return data.data?.message || "Signup failed!";
-            },
-          },
-        }
-        // console.log(data.status);
-      );
+      toast.loading("Signing in.....");
+
+      const response = await signupService(signupData);
+
+      toast.dismiss(); // Dismiss the loading toast
+      toast.success("Verification otp is sent to your email.");
+
+      console.log(response.data);
+      // onSignupSuccess(signupData.phone_number);
+
+      return response;
     } catch (error) {
-      toast.error("Internal server error!");
+      toast.dismiss(); // Dismiss any existing toast
+
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message ||
+          error.response.data?.non_field_errors?.[0] ||
+          "Signup failed!";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Internal server error!");
+      }
       console.error(error.response?.data?.non_field_errors || "Signup failed");
     }
   };
