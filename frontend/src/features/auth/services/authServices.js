@@ -5,7 +5,7 @@ const apiUrl = import.meta.env.VITE_BASE_URL;
 export async function loginService(loginData) {
   try {
     const response = await axios.post(`${apiUrl}auth/login/`, loginData);
-    console.log(response);
+    // console.log(response);
 
     return response;
   } catch (error) {
@@ -17,7 +17,7 @@ export async function loginService(loginData) {
 export async function signupService(signupData) {
   try {
     const response = await axios.post(`${apiUrl}auth/signup/`, signupData);
-    console.log(response);
+    // console.log(response);
 
     return response;
   } catch (error) {

@@ -5,7 +5,7 @@ import { signupService } from "../services/authServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const SignupComponent = () => {
+const SignupComponent = ({ handleOnSignupSuccess = () => {} }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,31 +23,60 @@ const SignupComponent = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    try {
-      toast.loading("Signing in.....");
+    setIsLoading(true);
 
+    try {
+      // Show loading toast
+      const loadingToastId = toast.loading("Signing up...");
+
+      // Make API call
       const response = await signupService(signupData);
 
-      toast.dismiss(); // Dismiss the loading toast
-      toast.success("Verification otp is sent to your email.");
+      // Dismiss loading toast
+      toast.dismiss(loadingToastId);
 
-      console.log(response.data);
-      // onSignupSuccess(signupData.phone_number);
+      // Show success message
+      toast.success("Verification OTP is sent to your email.");
 
-      return response;
+      console.log("Signup successful:", response.data);
+
+      // Get email from response or use the one from form
+      const userEmail = response.data?.email || signupData.email;
+
+      // Call parent callback to navigate to OTP page
+      handleOnSignupSuccess(userEmail);
     } catch (error) {
-      toast.dismiss(); // Dismiss any existing toast
+      // Dismiss any loading toast
+      toast.dismiss();
 
+      console.error("Signup error:", error);
+
+      // Handle different error scenarios
       if (error.response) {
+        // Server responded with error
+        console.log("Error status:", error.response.status);
+        console.log("Error data:", error.response.data);
+
         const errorMessage =
           error.response.data?.message ||
           error.response.data?.non_field_errors?.[0] ||
+          error.response.data?.error ||
+          error.response.data?.detail ||
           "Signup failed!";
+
         toast.error(errorMessage);
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error("No response received:", error.request);
+        toast.error("No response from server. Please check your connection.");
       } else {
-        toast.error("Internal server error!");
+        // Something else happened
+        console.error("Error:", error.message);
+        toast.error("An unexpected error occurred!");
       }
-      console.error(error.response?.data?.non_field_errors || "Signup failed");
+    } finally {
+      // Always reset loading state
+      setIsLoading(false);
     }
   };
 
