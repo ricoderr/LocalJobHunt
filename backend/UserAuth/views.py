@@ -54,7 +54,9 @@ class SignupAPIView(APIView):
             user = serializer.save()
             generate_otp(user=user)
             return Response(
-                {"message": "A verification message is sent to the phone number."}, status=status.HTTP_201_CREATED
+                {"message": "A verification message is sent to the phone number.", 
+                 "email": user.email, 
+                 }, status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
